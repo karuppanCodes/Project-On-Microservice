@@ -1,58 +1,83 @@
 # 🚀 Project On Microservice
 
-A **Java Spring Boot Microservices** project designed to demonstrate how a monolithic application can be developed as a collection of independent, scalable, and maintainable services.
+A **Java Spring Boot Microservices** project demonstrating how independent services can communicate with each other using **Spring Cloud Eureka, REST APIs, Spring Data JPA, and MySQL**.
 
 ## 📌 About the Project
 
-This project demonstrates the implementation of a **Microservices Architecture** using Java and Spring Boot. Each service is responsible for a specific business functionality and communicates with other services through REST APIs.
+This project implements a **Microservices Architecture** using Java and Spring Boot.
 
-The project focuses on important concepts such as **Service Discovery, API Gateway, Inter-Service Communication, Database Integration, and centralized configuration**.
+The application consists of two main business services:
+
+* **Product Service** – manages product-related operations.
+* **Order Service** – manages order-related operations.
+
+Both services register themselves with **Eureka Server**, which acts as the **Service Registry** and enables service discovery between the microservices.
+
+The project demonstrates practical concepts such as **Microservices Architecture, Service Discovery, Inter-Service Communication, REST APIs, Database Integration, JPA, and Hibernate**.
 
 ## 🛠️ Tech Stack
 
-| Technology      | Usage                        |
-| --------------- | ---------------------------- |
-| ☕ Java          | Programming Language         |
-| 🌱 Spring Boot  | Backend Framework            |
-| 🔗 Spring Cloud | Microservices Infrastructure |
-| 🌐 REST API     | Service Communication        |
-| 🚪 API Gateway  | Request Routing              |
-| 🔍 Eureka       | Service Discovery            |
-| 🗄️ MySQL       | Database                     |
-| 🔧 Maven        | Dependency Management        |
-| 🧪 Postman      | API Testing                  |
-| 💻 Git & GitHub | Version Control              |
+| Technology         | Usage                        |
+| ------------------ | ---------------------------- |
+| ☕ Java             | Programming Language         |
+| 🌱 Spring Boot     | Microservice Development     |
+| ☁️ Spring Cloud    | Microservices Infrastructure |
+| 🔍 Eureka Server   | Service Registry & Discovery |
+| 🌐 REST API        | Inter-Service Communication  |
+| 🗄️ MySQL          | Database                     |
+| 🔗 Spring Data JPA | Database Access              |
+| 🛠️ Hibernate      | ORM                          |
+| 🔧 Maven           | Dependency Management        |
+| 🧪 Postman         | API Testing                  |
+| 💻 Git & GitHub    | Version Control              |
 
 ## 🏗️ Architecture
 
 ```text
-                    ┌───────────────┐
-                    │    Client     │
-                    └───────┬───────┘
-                            │
-                            ▼
-                  ┌───────────────────┐
-                  │    API Gateway    │
-                  └─────────┬─────────┘
-                            │
-             ┌──────────────┼──────────────┐
-             ▼              ▼              ▼
-      ┌────────────┐ ┌────────────┐ ┌────────────┐
-      │  Service 1 │ │  Service 2 │ │  Service 3 │
-      │            │ │            │ │            │
-      │  User      │ │  Product   │ │  Order     │
-      │  Service   │ │  Service   │ │  Service   │
-      └─────┬──────┘ └─────┬──────┘ └─────┬──────┘
-            │              │              │
-            ▼              ▼              ▼
-        ┌───────┐      ┌───────┐      ┌───────┐
-        │ MySQL │      │ MySQL │      │ MySQL │
-        └───────┘      └───────┘      └───────┘
+                         ┌───────────────┐
+                         │    Client     │
+                         └───────┬───────┘
+                                 │
+                                 ▼
+                       ┌───────────────────┐
+                       │  Product Service  │
+                       └─────────┬─────────┘
+                                 │
+                                 │ REST API
+                                 │
+                                 ▼
+                       ┌───────────────────┐
+                       │   Order Service   │
+                       └─────────┬─────────┘
+                                 │
+                                 ▼
+                            ┌─────────┐
+                            │  MySQL  │
+                            └─────────┘
 
-                  ┌───────────────────┐
-                  │  Eureka Server    │
-                  │ Service Discovery │
-                  └───────────────────┘
+
+                    ┌──────────────────────────┐
+                    │      Eureka Server       │
+                    │     Service Registry     │
+                    └────────────┬─────────────┘
+                                 │
+                       ┌─────────┴─────────┐
+                       │                   │
+                       ▼                   ▼
+                Product Service       Order Service
+                   registers             registers
+```
+
+### 🔍 Service Discovery Flow
+
+```text
+Product Service ──────► Eureka Server
+                              ▲
+                              │
+Order Service ────────────────┘
+
+Eureka Server maintains the
+location of registered services.
 ```
 
 ## 📂 Project Structure
@@ -60,44 +85,110 @@ The project focuses on important concepts such as **Service Discovery, API Gatew
 ```text
 Project-On-Microservice/
 │
-├── api-gateway/
+├── eureka_server/
+│   └── Spring Boot Eureka Server
 │
-├── service-registry/
+├── Product_service/
+│   └── Spring Boot Product Microservice
 │
-├── user-service/
-│
-├── product-service/
-│
-├── order-service/
-│
-├── pom.xml
+├── Order_service/
+│   └── Spring Boot Order Microservice
 │
 └── README.md
 ```
 
+## 🔹 Microservices
+
+### 1. 🔍 Eureka Server
+
+Eureka Server acts as the **Service Registry** for the application.
+
+It maintains information about the available microservices and allows services to discover each other without hardcoding service locations.
+
+**Responsibilities:**
+
+* Service registration
+* Service discovery
+* Maintaining registered service information
+* Providing service locations to other microservices
+
+---
+
+### 2. 📦 Product Service
+
+The **Product Service** is responsible for managing product-related information.
+
+**Responsibilities:**
+
+* Create products
+* Retrieve products
+* Update products
+* Delete products
+* Store product information in MySQL
+
+Example REST APIs:
+
+```text
+GET     /products
+GET     /products/{id}
+POST    /products
+PUT     /products/{id}
+DELETE  /products/{id}
+```
+
+---
+
+### 3. 🛒 Order Service
+
+The **Order Service** is responsible for managing customer orders.
+
+**Responsibilities:**
+
+* Create orders
+* Retrieve orders
+* Update orders
+* Delete orders
+* Communicate with Product Service
+* Manage order information
+
+Example REST APIs:
+
+```text
+GET     /orders
+GET     /orders/{id}
+POST    /orders
+PUT     /orders/{id}
+DELETE  /orders/{id}
+```
+
+> The exact endpoint names may vary depending on the controller implementation.
+
+## 🔄 How the Application Works
+
+1. **Eureka Server** starts first and acts as the Service Registry.
+2. **Product Service** starts and registers itself with Eureka.
+3. **Order Service** starts and registers itself with Eureka.
+4. A client sends a request to the required microservice.
+5. When Order Service needs information from Product Service, it can discover Product Service through Eureka.
+6. The services communicate using REST APIs.
+7. The required data is stored or retrieved from MySQL.
+8. The response is returned to the client.
+
 ## ✨ Key Features
 
-* ✅ Microservices-based architecture
-* ✅ Independent services
+* ✅ Microservices Architecture
+* ✅ Product Service
+* ✅ Order Service
+* ✅ Eureka Service Registry
+* ✅ Service Discovery
+* ✅ Inter-Service Communication
 * ✅ RESTful APIs
-* ✅ API Gateway
-* ✅ Service Discovery using Eureka
-* ✅ Inter-service communication
-* ✅ MySQL database integration
-* ✅ Exception handling
-* ✅ Input validation
-* ✅ Maven dependency management
-* ✅ API testing using Postman
-
-## 🔄 How It Works
-
-1. The client sends a request to the **API Gateway**.
-2. The API Gateway identifies the required microservice.
-3. **Eureka Server** helps locate the available service instance.
-4. The request is forwarded to the appropriate microservice.
-5. The microservice performs the required business operation.
-6. Data is stored or retrieved from the database.
-7. The response is returned to the client through the API Gateway.
+* ✅ MySQL Database Integration
+* ✅ Spring Data JPA
+* ✅ Hibernate
+* ✅ Exception Handling
+* ✅ Maven Dependency Management
+* ✅ Postman API Testing
 
 ## ⚙️ Getting Started
 
@@ -110,7 +201,7 @@ Make sure you have the following installed:
 * MySQL
 * Git
 * Postman
-* IDE such as IntelliJ IDEA or Eclipse
+* IntelliJ IDEA / Eclipse / VS Code
 
 ### Clone the Repository
 
@@ -118,13 +209,15 @@ Make sure you have the following installed:
 git clone https://github.com/karuppanCodes/Project-On-Microservice.git
 ```
 
-### Configure Database
+Navigate to the project:
 
-Create the required MySQL databases and update the database configuration in each service's:
-
-```text
-application.properties
+```bash
+cd Project-On-Microservice
 ```
+
+## 🗄️ Database Configuration
+
+Configure MySQL in the `application.properties` file of the respective services.
 
 Example:
 
@@ -137,81 +230,95 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ```
 
-### Run the Project
+> Replace the database name, username, and password according to your local MySQL configuration.
+
+## ▶️ Running the Project
 
 Start the services in the following order:
 
 ```text
-1. Service Registry
-2. API Gateway
-3. User Service
-4. Product Service
-5. Order Service
+1. Eureka Server
+2. Product Service
+3. Order Service
 ```
 
-Build each service using:
+For each service, run:
 
 ```bash
 mvn clean install
 ```
 
-Run using:
+Then start the application:
 
 ```bash
 mvn spring-boot:run
 ```
 
+After starting the services, verify that **Product Service** and **Order Service** are registered with the Eureka Server.
+
 ## 🧪 API Testing
 
 The APIs can be tested using **Postman**.
 
-Example endpoints:
+### Product Service
 
 ```text
-GET    /users
-POST   /users
-GET    /products
-POST   /products
-GET    /orders
-POST   /orders
+GET     /products
+GET     /products/{id}
+POST    /products
+PUT     /products/{id}
+DELETE  /products/{id}
 ```
 
-> Endpoint names may vary depending on the implementation of each microservice.
+### Order Service
+
+```text
+GET     /orders
+GET     /orders/{id}
+POST    /orders
+PUT     /orders/{id}
+DELETE  /orders/{id}
+```
 
 ## 📚 Concepts Demonstrated
 
-This project helps demonstrate practical knowledge of:
+This project demonstrates practical knowledge of:
 
 * Microservices Architecture
 * Spring Boot
 * Spring Cloud
-* REST APIs
+* Eureka Service Registry
 * Service Discovery
-* API Gateway
+* REST APIs
+* Inter-Service Communication
 * Dependency Injection
-* JPA & Hibernate
+* Spring Data JPA
+* Hibernate
 * MySQL
 * Exception Handling
 * Maven
 * Git & GitHub
+* Postman
 
 ## 🔮 Future Enhancements
 
-* 🔹 Docker containerization
-* 🔹 Docker Compose
-* 🔹 Kafka for asynchronous communication
-* 🔹 Redis caching
+The project can be extended with:
+
+* 🔹 API Gateway
 * 🔹 Spring Cloud Config
 * 🔹 Circuit Breaker using Resilience4j
-* 🔹 Authentication & Authorization using JWT
-* 🔹 CI/CD pipeline
-* 🔹 Deployment to AWS
+* 🔹 Kafka for asynchronous communication
+* 🔹 Redis caching
+* 🔹 JWT Authentication & Authorization
+* 🔹 Docker & Docker Compose
+* 🔹 CI/CD Pipeline
+* 🔹 AWS Cloud Deployment
 
 ## 👨‍💻 Author
 
 **Gokulraj**
 
-Java Developer | Spring Boot | Microservices | SQL | DSA
+**Java Developer | Spring Boot | Microservices | SQL | DSA**
 
 ---
 
